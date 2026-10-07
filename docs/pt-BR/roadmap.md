@@ -8,7 +8,7 @@ As etapas abaixo são propostas incrementais; funcionalidades listadas como pend
 | BF-001 | Inicializar projeto, página inicial e qualidade | Concluída (pendência de dependências documentada)   |
 | BF-002 | Configurar Prisma e conexão PostgreSQL          | Concluída (pendências de dependências documentadas) |
 | BF-003 | Schema inicial, constraints e migrations        | Concluída                                           |
-| BF-004 | Seed com dados fictícios                        | Pendente                                            |
+| BF-004 | Seed com dados fictícios                        | Concluída                                           |
 | BF-005 | Autenticação e autorização por barbearia        | Pendente                                            |
 | BF-006 | Serviços: nome, preço e duração positiva        | Pendente                                            |
 | BF-007 | Usuários, papéis e barbeiros                    | Pendente                                            |

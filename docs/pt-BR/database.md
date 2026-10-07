@@ -2,9 +2,9 @@
 
 [English (US)](../en-US/database.md)
 
-## Implementado até a BF-003
+## Implementado até a BF-004
 
-Prisma 7.10.0, adaptador PostgreSQL, dez modelos de negócio e a primeira migration SQL. O cliente é gerado em `src/generated/prisma`, ignorado pelo Git. A configuração do CLI está em `prisma.config.ts`; a conexão da aplicação está em `src/lib/prisma.ts`. A migration inicial está versionada; seed pertence à BF-004.
+Prisma 7.10.0, adaptador PostgreSQL, dez modelos de negócio e a primeira migration SQL. O cliente é gerado em `src/generated/prisma`, ignorado pelo Git. A configuração do CLI está em `prisma.config.ts`; a conexão da aplicação está em `src/lib/prisma.ts`. A migration inicial está versionada; BF-004 adiciona o [seed fictício repetível](seed.md).
 
 ## PostgreSQL local
 
@@ -73,7 +73,7 @@ A constraint `Appointment_no_overlap` usa GiST, `btree_gist` e intervalo `[iníc
 
 Funcionamento: weekday 0 (domingo) a 6 (sábado), startMinute >= 0, endMinute <= 1440 e início anterior ao fim. Aceita múltiplos intervalos por dia e fim à meia-noite, sem sobreposições. Funcionamento atravessando meia-noite deve ser dividido entre dias. Bloqueios podem se sobrepor e serão tratados como união de intervalos na futura disponibilidade.
 
-A migration não verifica reservas contra bloqueios ou funcionamento: essas regras exigem o backend de disponibilidade e uma estratégia transacional entre alterações desses dados e reservas. FKs não substituem autorização de leitura/escrita por sessão; ainda não há RLS, autenticação, CRUD, seed ou envio de mensagens. `updatedAt` é mantido pelo Prisma; escrituras SQL diretas devem fornecê-lo/atualizá-lo.
+A migration não verifica reservas contra bloqueios ou funcionamento: essas regras exigem o backend de disponibilidade e uma estratégia transacional entre alterações desses dados e reservas. FKs não substituem autorização de leitura/escrita por sessão; ainda não há RLS, autenticação, CRUD ou envio de mensagens; o seed fictício está disponível. `updatedAt` é mantido pelo Prisma; escrituras SQL diretas devem fornecê-lo/atualizá-lo.
 
 ## Migrations
 
@@ -96,10 +96,10 @@ docker compose exec db createdb -U barberflow barberflow_schema_test
 npm run db:test
 ```
 
-Se o banco já existir, não repita o createdb. Adapte usuário/endereço à sua instalação. O executor rejeita o mesmo nome de banco usado por DATABASE_URL, mesmo com alias de host ou schema diferente. Aplica a migration no banco de testes, repete para comprovar idempotência, verifica drift e executa 11 testes reais. Transações usuais são revertidas; fixtures persistentes do teste de concorrência são removidas somente pelos UUIDs criados pela execução. Não há truncate, reset ou exclusão de banco.
+Se o banco já existir, não repita o createdb. Adapte usuário/endereço à sua instalação. O executor rejeita o mesmo nome de banco usado por DATABASE_URL, mesmo com alias de host ou schema diferente. Aplica a migration no banco de testes, repete para comprovar idempotência, verifica drift e executa 18 testes reais (11 de schema e sete de seed). Transações usuais são revertidas; fixtures persistentes do teste de concorrência são removidas somente pelos UUIDs criados pela execução. Não há truncate, reset ou exclusão de banco.
 
 CI cria bancos separados para aplicação e integração, aplica as migrations e executa a mesma suíte. O teste de concorrência observa uma transação aguardando lock da outra, confirma erro PostgreSQL 23P01 e apenas uma reserva persistida.
 
-Próxima etapa: BF-004, seed fictício e repetível, sem dados pessoais reais.
+Próxima etapa: BF-005, autenticação e autorização por barbearia.
 
 Referências: [Prisma migrations customizadas](https://www.prisma.io/docs/orm/v7/prisma-migrate/workflows/customizing-migrations), [PostgreSQL ranges](https://www.postgresql.org/docs/17/rangetypes.html) e [btree_gist](https://www.postgresql.org/docs/17/btree-gist.html).

@@ -29,3 +29,7 @@ Planned deployment: GitHub, Vercel and managed PostgreSQL as a separate stage. N
 PostgreSQL enforces data checks and GiST exclusions with `btree_gist` for appointment overlap per barber and business-hour overlap per weekday. The migration includes custom SQL not representable by Prisma. Integration tests exercise actual SQL, including lock contention between two independent transactions. The test database is separate from the application database.
 
 Integer-cent prices and service name/duration are copied into appointments. Future application code must copy the correct values during creation and enforce status transitions, consent, business hours and blocks. The database rejects appointment overlaps but does not yet cross-check appointments against blocked periods or business hours.
+
+## Fictitious data — BF-004
+
+The seed lives in prisma/seed-data.ts (fixtures), seed-demo.ts (transaction) and seed.ts (CLI entry). It uses fixed IDs, identity/shop checks and missing-row inserts, without updating or deleting data. A transactional advisory lock serializes concurrent executions. The production environment is blocked. The schema, UI and API remain unchanged.

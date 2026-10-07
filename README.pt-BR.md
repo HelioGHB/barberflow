@@ -9,7 +9,8 @@ Gestão e agendamento para barbearias, pensados para uma rotina simples em smart
 - **BF-001:** base Next.js, página inicial responsiva em português e ferramentas de qualidade.
 - **BF-002:** configuração Prisma/PostgreSQL, banco local, diagnóstico de conexão e documentação bilíngue para GitHub.
 - **BF-003:** schema de negócio, relacionamentos por barbearia, constraints SQL e migration inicial.
-- **Próxima — BF-004:** seed fictício de desenvolvimento.
+- **BF-004:** seed fictício repetível com 36 registros, verificação de conflitos e bloqueio em produção.
+- **Próxima — BF-005:** autenticação e autorização por barbearia.
 
 Login, cadastro de clientes, agendamentos e dashboards ainda não estão implementados. A interface usa português brasileiro; a documentação do repositório está disponível nos dois idiomas.
 
@@ -29,6 +30,7 @@ npm ci
 cp .env.example .env
 npm run db:up
 npm run db:migrate
+npm run db:seed
 npm run db:check
 npm run dev
 ```
@@ -60,3 +62,7 @@ npm run db:check
 - [Contribuição](CONTRIBUTING.md)
 
 O desenvolvimento usa tarefas pequenas e validadas individualmente. IA, pagamentos, Pix, WhatsApp API, marketplace e SaaS comercial ficam fora do MVP inicial. Ainda não foi escolhida uma licença; publicar o repositório não concede uma licença de código aberto.
+
+## Dados de demonstração
+
+`npm run db:seed` cria explicitamente a barbearia `barberflow-demo` e dados fictícios de desenvolvimento após as migrations. Repetir preserva registros e edições existentes. Emails usam `.invalid`, telefones usam a faixa NANPA reservada 555-0100–0199 e consentimento WhatsApp começa desativado. Não há senhas de login ou envio de mensagens. As datas são fixas em torno da referência de 7 de outubro de 2026; o seed não move agendamentos conforme o tempo passa. O comando é bloqueado quando NODE_ENV=production. Veja os [detalhes do seed](docs/pt-BR/seed.md).

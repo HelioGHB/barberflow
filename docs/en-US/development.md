@@ -21,9 +21,9 @@ Node.js 24 and npm; `.nvmrc` and `engines` specify the supported version. `npm c
 | `npm run db:check`                          | `SELECT 1` integration diagnostic           |
 | `npm run db:studio`                         | Inspect local database once models exist    |
 
-BF-003 adds the initial migration and business models. Prisma Studio can now inspect them; the seed still belongs to BF-004.
+BF-003 adds the initial migration and business models. Prisma Studio can now inspect them; the fictitious seed has been available since BF-004.
 
-BF-003 commands: `npm run db:migrate` (apply reviewed migrations), `npm run db:migrate:status` (inspect status), `npm run db:migrate:dev` (generate development migrations), `npm run db:drift` (compare recognized structures) and `npm run db:test` (integrity in a separate database).
+BF-003 commands: `npm run db:migrate` (apply reviewed migrations), `npm run db:migrate:status` (inspect status), `npm run db:migrate:dev` (generate development migrations), `npm run db:drift` (compare recognized structures) and `npm run db:test` (integrity in a separate database). BF-004 adds `npm run db:seed` to explicitly create fictitious data after migrations.
 
 ## GitHub and languages
 
@@ -50,3 +50,7 @@ BF-002 added transitive Prisma CLI findings for `deepmerge-ts` (GHSA-ggr8-5vv4-3
 ## BF-003 verification
 
 The database suite uses pg (the same driver as the Prisma adapter) to check SQLSTATE and constraint names against real PostgreSQL. Prisma creates fixtures, exercising generated models and relationships. The runner requires TEST_DATABASE_URL with a different database name, applies migrations and verifies repeat deployment without changes and absence of drift. The concurrency test uses two actual connections/transactions and observes lock waiting. Custom SQL is exercised rather than compared as text. See database.md for setup and limitations.
+
+## BF-004 — Seed
+
+`npm run db:seed` uses Prisma's migrations.seed hook with Node/tsx and the react-server condition for server-only imports. Installation, builds and migration deployment never run it automatically. CI checks the command twice and runs seven seed tests in the isolated database alongside the 11 schema tests. See the [seed guide](seed.md).

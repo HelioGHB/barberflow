@@ -9,7 +9,8 @@ Barbershop management and scheduling, designed for a simple daily workflow on An
 - **BF-001:** Next.js foundation, responsive Portuguese landing page and quality tooling.
 - **BF-002:** Prisma/PostgreSQL configuration, local database, connection diagnostic and bilingual GitHub documentation.
 - **BF-003:** business schema, shop-scoped relationships, SQL integrity constraints and initial migration.
-- **Next — BF-004:** fictitious development seed.
+- **BF-004:** repeatable fictitious seed with 36 records, collision checks and production guard.
+- **Next — BF-005:** authentication and shop authorization.
 
 Login, customer registration, appointments and dashboards are not implemented yet. The product UI currently uses Brazilian Portuguese; the repository documentation is available in both languages.
 
@@ -29,6 +30,7 @@ npm ci
 cp .env.example .env
 npm run db:up
 npm run db:migrate
+npm run db:seed
 npm run db:check
 npm run dev
 ```
@@ -60,3 +62,7 @@ npm run db:check
 - [Contributing](CONTRIBUTING.md)
 
 Development follows small, independently validated tasks. AI, payments, Pix, WhatsApp API, marketplaces and commercial SaaS features are outside the initial MVP. No license has been selected yet; publishing this repository does not grant an open-source license.
+
+## Demo data
+
+`npm run db:seed` explicitly creates the `barberflow-demo` shop and fictitious development data after migrations. Repeated execution preserves existing rows and edits. Emails use `.invalid`, phones use the reserved NANPA 555-0100–0199 range and WhatsApp consent starts disabled. There are no login passwords or message deliveries. Dates are fixed around the October 7, 2026 reference date; the seed does not move appointments as time passes. The command is disabled when NODE_ENV=production. See [seed details](docs/en-US/seed.md).

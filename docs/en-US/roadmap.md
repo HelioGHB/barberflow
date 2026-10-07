@@ -9,7 +9,7 @@ The following stages are incremental proposals; pending features do not exist ye
 | BF-001 | Initialize project, landing page and quality   | Complete (dependency follow-up documented) |
 | BF-002 | Configure Prisma and PostgreSQL connection     | Complete (dependency follow-up documented) |
 | BF-003 | Initial schema, constraints and migrations     | Complete                                   |
-| BF-004 | Fictitious seed data                           | Pending                                    |
+| BF-004 | Fictitious seed data                           | Complete                                   |
 | BF-005 | Authentication and shop authorization          | Pending                                    |
 | BF-006 | Services: name, price and positive duration    | Pending                                    |
 | BF-007 | Users, roles and barbers                       | Pending                                    |

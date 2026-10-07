@@ -2,9 +2,9 @@
 
 [Português (Brasil)](../pt-BR/database.md)
 
-## Implemented through BF-003
+## Implemented through BF-004
 
-Prisma 7.10.0, its PostgreSQL adapter, ten business models and the first SQL migration. The client is generated in `src/generated/prisma`, which Git ignores. CLI configuration lives in `prisma.config.ts`; application access lives in `src/lib/prisma.ts`. The initial migration is versioned; the seed belongs to BF-004.
+Prisma 7.10.0, its PostgreSQL adapter, ten business models and the first SQL migration. The client is generated in `src/generated/prisma`, which Git ignores. CLI configuration lives in `prisma.config.ts`; application access lives in `src/lib/prisma.ts`. The initial migration is versioned; BF-004 adds the [repeatable fictitious seed](seed.md).
 
 ## Local PostgreSQL
 
@@ -73,7 +73,7 @@ Appointments hold their own serviceName, servicePriceCents and serviceDurationMi
 
 Business hours use weekday 0 (Sunday) through 6 (Saturday), startMinute >= 0, endMinute <= 1440 and start before end. They allow multiple daily intervals and midnight endings without overlap. Overnight hours must be split across weekdays. Blocked periods may overlap and will be interpreted as the union of intervals by future availability code.
 
-The migration does not check bookings against blocks or opening hours: those rules need backend availability and a transactional strategy coordinating changes with bookings. Foreign keys do not replace session-based read/write authorization; there is no RLS, authentication, CRUD, seed or message delivery yet. Prisma maintains updatedAt; direct SQL writes must supply/update it.
+The migration does not check bookings against blocks or opening hours: those rules need backend availability and a transactional strategy coordinating changes with bookings. Foreign keys do not replace session-based read/write authorization; there is no RLS, authentication, CRUD or message delivery yet; the fictitious seed is available. Prisma maintains updatedAt; direct SQL writes must supply/update it.
 
 ## Migrations
 
@@ -96,10 +96,10 @@ docker compose exec db createdb -U barberflow barberflow_schema_test
 npm run db:test
 ```
 
-Do not repeat createdb if the database already exists. Adjust the username/address for your installation. The runner rejects the same database name used by DATABASE_URL, even with a host alias or different schema. It applies migrations to the test database, repeats deployment to verify idempotence, checks drift and runs 11 real tests. Ordinary transactions roll back; persistent concurrency fixtures are removed only by UUIDs created in that run. There is no truncate, reset or database deletion.
+Do not repeat createdb if the database already exists. Adjust the username/address for your installation. The runner rejects the same database name used by DATABASE_URL, even with a host alias or different schema. It applies migrations to the test database, repeats deployment to verify idempotence, checks drift and runs 18 real tests (11 schema tests and seven seed tests). Ordinary transactions roll back; persistent concurrency fixtures are removed only by UUIDs created in that run. There is no truncate, reset or database deletion.
 
 CI creates separate application and integration databases, applies migrations and runs the same suite. The concurrency test observes one transaction waiting for another's lock, verifies PostgreSQL error 23P01 and confirms only one persisted reservation.
 
-Next: BF-004, a fictitious, repeatable seed without real personal data.
+Next: BF-005, authentication and shop authorization.
 
 References: [Prisma custom migrations](https://www.prisma.io/docs/orm/v7/prisma-migrate/workflows/customizing-migrations), [PostgreSQL ranges](https://www.postgresql.org/docs/17/rangetypes.html) and [btree_gist](https://www.postgresql.org/docs/17/btree-gist.html).

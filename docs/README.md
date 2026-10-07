@@ -14,3 +14,7 @@
 Update both language versions together / Atualize os dois idiomas juntos.
 
 BF-003: [Português (Brasil)](pt-BR/tasks/BF-003.md) · [English (US)](en-US/tasks/BF-003.md).
+
+Seed: [Português (Brasil)](pt-BR/seed.md) · [English (US)](en-US/seed.md).
+
+BF-004: [Português (Brasil)](pt-BR/tasks/BF-004.md) · [English (US)](en-US/tasks/BF-004.md).

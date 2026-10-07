@@ -29,3 +29,7 @@ Deploy planejado: GitHub, Vercel e PostgreSQL gerenciado, em etapa própria. O c
 PostgreSQL aplica checks de dados e exclusão GiST com `btree_gist` para sobreposição de agendamentos por barbeiro e de horários de funcionamento por dia. A migration inclui SQL customizado não representável pelo Prisma. Os testes de integração exercitam SQL real, incluindo bloqueio entre duas transações independentes. O banco de testes é separado do banco da aplicação.
 
 Preço em centavos e nome/duração do serviço são copiados no agendamento. A aplicação futura será responsável por copiar os valores corretos na criação e por regras de transição de status, consentimento, funcionamento e bloqueios. O banco impede overlaps entre agendamentos, mas ainda não cruza agendamentos com bloqueios ou horários de funcionamento.
+
+## Dados fictícios — BF-004
+
+O seed vive em prisma/seed-data.ts (fixtures), seed-demo.ts (transação) e seed.ts (entrada CLI). Usa IDs fixos, verificações de identidade/barbearia e inserções apenas de registros ausentes, sem atualizar ou apagar dados. Um advisory lock transacional serializa execuções concorrentes. O ambiente production é bloqueado. Não modifica o schema, a interface ou a API.

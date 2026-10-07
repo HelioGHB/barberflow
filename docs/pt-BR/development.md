@@ -21,9 +21,9 @@ Node.js 24 e npm; `.nvmrc` e `engines` indicam a versão suportada. `npm ci` usa
 | `npm run db:check`                          | Consulta de integração `SELECT 1`             |
 | `npm run db:studio`                         | Inspecionar banco local quando houver modelos |
 
-BF-003 adiciona a migration inicial e modelos de negócio. Prisma Studio já pode inspecioná-los; seed ainda pertence à BF-004.
+BF-003 adiciona a migration inicial e modelos de negócio. Prisma Studio já pode inspecioná-los; o seed fictício já está disponível desde BF-004.
 
-Comandos adicionados na BF-003: `npm run db:migrate` (aplicar migrations revisadas), `npm run db:migrate:status` (consultar estado), `npm run db:migrate:dev` (gerar migrations em desenvolvimento), `npm run db:drift` (comparar estrutura reconhecida) e `npm run db:test` (integridade em banco separado).
+Comandos adicionados na BF-003: `npm run db:migrate` (aplicar migrations revisadas), `npm run db:migrate:status` (consultar estado), `npm run db:migrate:dev` (gerar migrations em desenvolvimento), `npm run db:drift` (comparar estrutura reconhecida) e `npm run db:test` (integridade em banco separado). BF-004 adiciona `npm run db:seed` para criar os dados fictícios explicitamente após migrations.
 
 ## GitHub e idiomas
 
@@ -50,3 +50,7 @@ BF-002 adicionou alertas de `deepmerge-ts` (GHSA-ggr8-5vv4-36mx) e `mysql2` (GHS
 ## Verificação da BF-003
 
 A suíte de banco usa pg (o mesmo driver do adaptador Prisma) para conferir SQLSTATE e nome da constraint no PostgreSQL real. As fixtures são criadas com Prisma, demonstrando o uso dos modelos e relacionamentos gerados. O executor exige TEST_DATABASE_URL com nome de banco diferente do banco da aplicação, aplica a migration e verifica repetição sem alterações e ausência de drift. O teste de concorrência usa duas conexões/transações reais e observa a espera por lock. SQL customizado é testado em vez de comparado como texto. Detalhes de preparação e limitações em database.md.
+
+## BF-004 — Seed
+
+O comando `npm run db:seed` usa o hook `migrations.seed` do Prisma, com Node/tsx e a condição react-server para imports server-only. Não é executado por instalação, build ou aplicação de migrations. A CI verifica o comando duas vezes e executa sete testes de seed no banco isolado, além dos 11 testes de schema. Ver [guia do seed](seed.md).
