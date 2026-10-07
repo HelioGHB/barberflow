@@ -1,4 +1,3 @@
-// Business models and the first migration belong to BF-003.
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -6,4 +5,191 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  BARBER
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum ReminderStatus {
+  PENDING
+  CONTACTED
+  DISMISSED
+}
+
+model User {
+  id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String             @db.VarChar(120)
+  email       String             @unique @db.VarChar(254)
+  isActive    Boolean            @default(true)
+  createdAt   DateTime           @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime           @updatedAt @db.Timestamptz(3)
+  memberships BarbershopMember[]
+}
+
+model Barbershop {
+  id             String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String             @db.VarChar(120)
+  slug           String             @unique @db.VarChar(80)
+  timezone       String             @default("America/Sao_Paulo") @db.VarChar(100)
+  isActive       Boolean            @default(true)
+  createdAt      DateTime           @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime           @updatedAt @db.Timestamptz(3)
+  members        BarbershopMember[]
+  barbers        Barber[]
+  customers      Customer[]
+  services       Service[]
+  appointments   Appointment[]
+  businessHours  BusinessHour[]
+  blockedPeriods BlockedPeriod[]
+  reminders      CustomerReminder[]
+}
+
+model BarbershopMember {
+  barbershopId String     @db.Uuid
+  userId       String     @db.Uuid
+  role         UserRole
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime   @updatedAt @db.Timestamptz(3)
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  barber       Barber?
+
+  @@id([barbershopId, userId])
+  @@index([userId, isActive])
+  @@index([barbershopId, role, isActive])
+}
+
+model Barber {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  barbershopId   String           @db.Uuid
+  userId         String           @db.Uuid
+  displayName    String           @db.VarChar(120)
+  isActive       Boolean          @default(true)
+  createdAt      DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime         @updatedAt @db.Timestamptz(3)
+  barbershop     Barbershop       @relation(fields: [barbershopId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  member         BarbershopMember @relation(fields: [barbershopId, userId], references: [barbershopId, userId], onDelete: Restrict, onUpdate: Restrict)
+  appointments   Appointment[]
+  blockedPeriods BlockedPeriod[]
+
+  @@unique([barbershopId, id])
+  @@unique([barbershopId, userId])
+  @@index([barbershopId, isActive])
+}
+
+model Customer {
+  id              String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  barbershopId    String             @db.Uuid
+  name            String             @db.VarChar(120)
+  phone           String             @db.VarChar(16)
+  whatsappConsent Boolean            @default(false)
+  isActive        Boolean            @default(true)
+  createdAt       DateTime           @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime           @updatedAt @db.Timestamptz(3)
+  barbershop      Barbershop         @relation(fields: [barbershopId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  appointments    Appointment[]
+  reminders       CustomerReminder[]
+
+  @@unique([barbershopId, id])
+  @@unique([barbershopId, phone])
+  @@index([barbershopId, isActive, name])
+}
+
+model Service {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  barbershopId    String        @db.Uuid
+  name            String        @db.VarChar(120)
+  priceCents      Int
+  durationMinutes Int
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime      @updatedAt @db.Timestamptz(3)
+  barbershop      Barbershop    @relation(fields: [barbershopId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  appointments    Appointment[]
+
+  @@unique([barbershopId, id])
+  @@index([barbershopId, isActive, name])
+}
+
+model Appointment {
+  id                     String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  barbershopId           String            @db.Uuid
+  barberId               String            @db.Uuid
+  customerId             String            @db.Uuid
+  serviceId              String            @db.Uuid
+  startsAt               DateTime          @db.Timestamptz(3)
+  endsAt                 DateTime          @db.Timestamptz(3)
+  status                 AppointmentStatus @default(SCHEDULED)
+  serviceName            String            @db.VarChar(120)
+  servicePriceCents      Int
+  serviceDurationMinutes Int
+  completedAt            DateTime?         @db.Timestamptz(3)
+  notes                  String?           @db.VarChar(500)
+  createdAt              DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt              DateTime          @updatedAt @db.Timestamptz(3)
+  barbershop             Barbershop        @relation(fields: [barbershopId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  barber                 Barber            @relation(fields: [barbershopId, barberId], references: [barbershopId, id], onDelete: Restrict, onUpdate: Restrict)
+  customer               Customer          @relation(fields: [barbershopId, customerId], references: [barbershopId, id], onDelete: Restrict, onUpdate: Restrict)
+  service                Service           @relation(fields: [barbershopId, serviceId], references: [barbershopId, id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([barbershopId, id])
+  @@index([barbershopId, barberId, startsAt])
+  @@index([barbershopId, startsAt, status])
+  @@index([barbershopId, customerId, status, startsAt])
+  @@index([barbershopId, serviceId])
+}
+
+model BusinessHour {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  barbershopId String     @db.Uuid
+  weekday      Int
+  startMinute  Int
+  endMinute    Int
+  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime   @updatedAt @db.Timestamptz(3)
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([barbershopId, weekday, startMinute])
+}
+
+model BlockedPeriod {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  barbershopId String     @db.Uuid
+  barberId     String?    @db.Uuid
+  startsAt     DateTime   @db.Timestamptz(3)
+  endsAt       DateTime   @db.Timestamptz(3)
+  reason       String?    @db.VarChar(255)
+  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime   @updatedAt @db.Timestamptz(3)
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  barber       Barber?    @relation(fields: [barbershopId, barberId], references: [barbershopId, id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([barbershopId, startsAt])
+  @@index([barbershopId, barberId, startsAt])
+}
+
+model CustomerReminder {
+  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  barbershopId String         @db.Uuid
+  customerId   String         @db.Uuid
+  status       ReminderStatus @default(PENDING)
+  contactedAt  DateTime?      @db.Timestamptz(3)
+  createdAt    DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime       @updatedAt @db.Timestamptz(3)
+  barbershop   Barbershop     @relation(fields: [barbershopId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  customer     Customer       @relation(fields: [barbershopId, customerId], references: [barbershopId, id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([barbershopId, status, createdAt])
+  @@index([barbershopId, customerId, createdAt])
 }

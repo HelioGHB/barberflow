@@ -15,11 +15,16 @@
     "db:generate": "prisma generate",
     "db:validate": "prisma validate",
     "db:format": "prisma format",
-    "db:check": "tsx --conditions=react-server scripts/check-db.ts",
+    "db:check": "node --import tsx --conditions=react-server scripts/check-db.ts",
     "db:up": "docker compose up -d --wait db",
     "db:down": "docker compose down",
     "db:studio": "prisma studio",
-    "test": "tsx --test tests/*.test.ts"
+    "test": "node --import tsx --test tests/*.test.ts",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:migrate:status": "prisma migrate status",
+    "db:drift": "prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code",
+    "db:test": "node --import tsx --conditions=react-server scripts/test-db.ts"
   },
   "dependencies": {
     "@next/env": "16.4.0",
@@ -33,10 +38,12 @@
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "^20",
+    "@types/pg": "8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.0",
+    "pg": "8.23.1",
     "prettier": "3.9.9",
     "prisma": "7.10.0",
     "tailwindcss": "^4",

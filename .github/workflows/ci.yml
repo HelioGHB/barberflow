@@ -26,7 +26,7 @@ jobs:
       - run: npm run db:validate
       - run: npm run build
   database:
-    name: PostgreSQL connection / Conexão PostgreSQL
+    name: PostgreSQL migrations and integrity / Migrations e integridade PostgreSQL
     runs-on: ubuntu-latest
     timeout-minutes: 10
     services:
@@ -45,6 +45,7 @@ jobs:
           --health-retries 12
     env:
       DATABASE_URL: postgresql://barberflow:barberflow_ci_example@localhost:5432/barberflow_ci?schema=public
+      TEST_DATABASE_URL: postgresql://barberflow:barberflow_ci_example@localhost:5432/barberflow_schema_test?schema=public
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -52,4 +53,10 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - run: npm run db:migrate
+      - run: npm run db:migrate:status
+      - run: npm run db:drift
       - run: npm run db:check
+      - name: Create isolated test database / Criar banco de testes isolado
+        run: docker exec "${{ job.services.postgres.id }}" createdb -U barberflow barberflow_schema_test
+      - run: npm run db:test
