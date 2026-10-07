@@ -1,0 +1,9 @@
+// Business models and the first migration belong to BF-003.
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
