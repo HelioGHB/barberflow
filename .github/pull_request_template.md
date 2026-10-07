@@ -12,7 +12,7 @@ BF-XXX
 - [ ] `npm test`
 - [ ] `npm run db:validate`
 - [ ] `npm run build`
-- [ ] Database changes checked with `npm run db:check`, if applicable / Mudanças de banco verificadas, se aplicável
+- [ ] Database changes checked with `npm run db:check` and `npm run db:test`, if applicable / Mudanças de banco verificadas, se aplicável
 - [ ] Documentation updated in pt-BR and en-US / Documentação atualizada nos dois idiomas
 
 ## Limitations / Limitações

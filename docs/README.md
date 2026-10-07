@@ -12,3 +12,5 @@
 | BF-002                                     | [pt-BR](pt-BR/tasks/BF-002.md) | [en-US](en-US/tasks/BF-002.md) |
 
 Update both language versions together / Atualize os dois idiomas juntos.
+
+BF-003: [Português (Brasil)](pt-BR/tasks/BF-003.md) · [English (US)](en-US/tasks/BF-003.md).

@@ -10,8 +10,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Repository guidance / Orientações do repositório
 
-Keep documentation synchronized in `docs/en-US` and `docs/pt-BR`. Follow scoped BF tasks; business models begin in BF-003. Never commit `.env` or generated Prisma code. Run quality checks and relevant database diagnostics before completing changes.
+Keep documentation synchronized in `docs/en-US` and `docs/pt-BR`. Follow scoped BF tasks; business models and custom SQL migrations exist from BF-003. Never commit `.env` or generated Prisma code. Run quality checks and relevant database diagnostics before completing changes.
 
-Mantenha a documentação sincronizada em `docs/en-US` e `docs/pt-BR`. Siga tarefas BF com escopo definido; modelos de negócio começam na BF-003. Nunca versionar `.env` ou código Prisma gerado. Execute qualidade e diagnóstico de banco relevante antes de concluir alterações.
+Mantenha a documentação sincronizada em `docs/en-US` e `docs/pt-BR`. Siga tarefas BF com escopo definido; modelos de negócio e migrations SQL customizadas existem desde BF-003. Nunca versionar `.env` ou código Prisma gerado. Execute qualidade e diagnóstico de banco relevante antes de concluir alterações.
 
 O bloco Next.js acima é gerado pelo framework: esta versão pode diferir das APIs conhecidas. Leia os guias relevantes em `node_modules/next/dist/docs/` antes de alterar código Next.js e observe os avisos de depreciação.

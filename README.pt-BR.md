@@ -8,7 +8,8 @@ Gestão e agendamento para barbearias, pensados para uma rotina simples em smart
 
 - **BF-001:** base Next.js, página inicial responsiva em português e ferramentas de qualidade.
 - **BF-002:** configuração Prisma/PostgreSQL, banco local, diagnóstico de conexão e documentação bilíngue para GitHub.
-- **Próxima — BF-003:** schema de negócio, constraints e migrations iniciais.
+- **BF-003:** schema de negócio, relacionamentos por barbearia, constraints SQL e migration inicial.
+- **Próxima — BF-004:** seed fictício de desenvolvimento.
 
 Login, cadastro de clientes, agendamentos e dashboards ainda não estão implementados. A interface usa português brasileiro; a documentação do repositório está disponível nos dois idiomas.
 
@@ -27,6 +28,7 @@ nvm use
 npm ci
 cp .env.example .env
 npm run db:up
+npm run db:migrate
 npm run db:check
 npm run dev
 ```
@@ -45,7 +47,7 @@ npm run build
 npm run db:check
 ```
 
-`db:check` é uma verificação de integração que exige PostgreSQL. GitHub Actions executa qualidade, build de produção e um job separado de conexão PostgreSQL. Veja o [guia de desenvolvimento](docs/pt-BR/development.md) para as pendências conhecidas da auditoria de dependências.
+`db:check` exige PostgreSQL. `npm run db:test` verifica integridade do schema em um banco separado, configurado por `TEST_DATABASE_URL`; veja o [guia do banco](docs/pt-BR/database.md) para prepará-lo uma vez. GitHub Actions executa qualidade, build de produção e um job separado de migrations e integridade PostgreSQL. Veja o [guia de desenvolvimento](docs/pt-BR/development.md) para as pendências conhecidas da auditoria de dependências.
 
 ## Documentação
 

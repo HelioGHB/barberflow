@@ -8,7 +8,8 @@ Barbershop management and scheduling, designed for a simple daily workflow on An
 
 - **BF-001:** Next.js foundation, responsive Portuguese landing page and quality tooling.
 - **BF-002:** Prisma/PostgreSQL configuration, local database, connection diagnostic and bilingual GitHub documentation.
-- **Next — BF-003:** business schema, constraints and initial migrations.
+- **BF-003:** business schema, shop-scoped relationships, SQL integrity constraints and initial migration.
+- **Next — BF-004:** fictitious development seed.
 
 Login, customer registration, appointments and dashboards are not implemented yet. The product UI currently uses Brazilian Portuguese; the repository documentation is available in both languages.
 
@@ -27,6 +28,7 @@ nvm use
 npm ci
 cp .env.example .env
 npm run db:up
+npm run db:migrate
 npm run db:check
 npm run dev
 ```
@@ -45,7 +47,7 @@ npm run build
 npm run db:check
 ```
 
-`db:check` is an integration check that requires PostgreSQL. GitHub Actions runs quality checks, a production build and a separate PostgreSQL connection job. See the [development guide](docs/en-US/development.md) for known dependency audit findings.
+`db:check` requires PostgreSQL. `npm run db:test` runs schema integrity tests in a separate database configured by `TEST_DATABASE_URL`; see the [database guide](docs/en-US/database.md) for its one-time setup. GitHub Actions runs quality checks, a production build and a separate PostgreSQL migration and integrity job. See the [development guide](docs/en-US/development.md) for known dependency audit findings.
 
 ## Documentation
 

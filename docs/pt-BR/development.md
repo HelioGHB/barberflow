@@ -21,13 +21,15 @@ Node.js 24 e npm; `.nvmrc` e `engines` indicam a versão suportada. `npm ci` usa
 | `npm run db:check`                          | Consulta de integração `SELECT 1`             |
 | `npm run db:studio`                         | Inspecionar banco local quando houver modelos |
 
-Não há migrations ou seed na BF-002. Prisma Studio será útil após BF-003. O schema sem modelos gera um cliente que permite consultar a conexão sem antecipar entidades.
+BF-003 adiciona a migration inicial e modelos de negócio. Prisma Studio já pode inspecioná-los; seed ainda pertence à BF-004.
+
+Comandos adicionados na BF-003: `npm run db:migrate` (aplicar migrations revisadas), `npm run db:migrate:status` (consultar estado), `npm run db:migrate:dev` (gerar migrations em desenvolvimento), `npm run db:drift` (comparar estrutura reconhecida) e `npm run db:test` (integridade em banco separado).
 
 ## GitHub e idiomas
 
 Remoto informado: `https://github.com/HelioGHB/barberflow.git`. Branch principal: `main`. README principal em inglês, `README.pt-BR.md` em português; documentos correspondentes em `docs/en-US` e `docs/pt-BR`. Atualize ambas as versões na mesma tarefa. Templates de issue e PR são bilíngues. A interface permanece em pt-BR.
 
-A rotina `.github/workflows/ci.yml` executa qualidade e build sem configurar banco no primeiro job; outro job usa PostgreSQL temporário com senha fictícia para testar a conexão. Não depende de credenciais reais do projeto. O arquivo de workflow foi preparado localmente; seu resultado remoto deve ser confirmado no GitHub Actions após o push.
+A rotina `.github/workflows/ci.yml` executa qualidade e build sem configurar banco no primeiro job; outro job usa PostgreSQL temporário com senha fictícia para testar conexão, migrations e integridade com banco separado. Não depende de credenciais reais do projeto. O arquivo de workflow foi preparado localmente; seu resultado remoto deve ser confirmado no GitHub Actions após o push.
 
 Prefira commits pequenos e semânticos. `.env*`, código Prisma gerado, node_modules e `.next` ficam fora do Git; `.env.example` é permitido. Não configure `origin` com tokens na URL. Para um clone já existente, use `git push -u origin main` com autenticação GitHub configurada. Não use push forçado para resolver conflitos.
 
@@ -44,3 +46,7 @@ A auditoria da BF-001 mostrou cinco alertas altos na cadeia do ESLint (`braces`,
 BF-002 adicionou alertas de `deepmerge-ts` (GHSA-ggr8-5vv4-36mx) e `mysql2` (GHSA-3f6p-5ww8-9rcr / GHSA-rgwj-5xj2-c3m3) transitivos do CLI Prisma. A auditoria completa retornou nove alertas altos; `--omit=dev` também lista quatro alertas da cadeia Prisma devido ao relacionamento peer de `@prisma/client` com o CLI. Isso não significa que o aplicativo usa MySQL, mas a pendência permanece na árvore instalada.
 
 `npm audit fix` sem `--force` foi executado; os alertas remanescentes sugerem downgrades principais incompatíveis de Prisma e eslint-config-next. Não aplicar automaticamente. Antes de deploy, reavaliar versões corrigidas e a árvore efetivamente incluída no artefato de produção. A BF-002 não declara auditoria limpa.
+
+## Verificação da BF-003
+
+A suíte de banco usa pg (o mesmo driver do adaptador Prisma) para conferir SQLSTATE e nome da constraint no PostgreSQL real. As fixtures são criadas com Prisma, demonstrando o uso dos modelos e relacionamentos gerados. O executor exige TEST_DATABASE_URL com nome de banco diferente do banco da aplicação, aplica a migration e verifica repetição sem alterações e ausência de drift. O teste de concorrência usa duas conexões/transações reais e observa a espera por lock. SQL customizado é testado em vez de comparado como texto. Detalhes de preparação e limitações em database.md.
