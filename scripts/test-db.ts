@@ -50,6 +50,7 @@ const commands = [
     "--conditions=react-server",
     "--test",
     "tests/integration/schema.test.ts",
+    "tests/integration/seed.test.ts",
   ],
 ];
 
